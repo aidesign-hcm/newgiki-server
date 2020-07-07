@@ -38,14 +38,22 @@ app.use((req, res, next) => {
 //Import Router 
 const productRouter = require('./api/routes/products')
 const orderRouter = require('./api/routes/orders')
-const userRouter = require('./api/routes/auth')
+const userRouter = require('./api/routes/users')
 const categoryRouter = require('./api/routes/categories')
+const addressRouter = require('./api/routes/address')
+const shipmentRouter = require('./api/routes/shipment')
+const paymentRouter = require('./api/routes/payment')
+const searchRouter = require('./api/routes/search')
 
 // Use Router 
 app.use('/api/products', productRouter)
 app.use('/api/orders', orderRouter )
 app.use('/api/auth', userRouter)
 app.use('/api/categories', categoryRouter )
+app.use('/api/address', addressRouter )
+app.use('/api/shipment', shipmentRouter )
+app.use('/api/payment', paymentRouter )
+app.use('/api/search', searchRouter )
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');

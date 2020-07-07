@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
@@ -14,6 +15,7 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  address: {type: Schema.Types.ObjectId, ref: 'Address'}
 });
 
 // userSchema.pre("save", function (next) {

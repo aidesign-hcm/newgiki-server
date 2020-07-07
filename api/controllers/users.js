@@ -4,11 +4,11 @@ const bcrypt = require("bcryptjs");
 // var hash = bcrypt.hashSync("B4c0//", salt);
 const jwt = require("jsonwebtoken");
 
-const User = require("../models/auth");
+const User = require("../models/users");
 
 exports.user_get_all = async (req, res, next) => {
   try {
-    const users = await User.find().select("email").exec();
+    const users = await User.find().select("email address").exec();
     res.status(200).json({
       message: "this is all users",
       count: users.length,
@@ -33,7 +33,6 @@ exports.user_signup = async (req, res, next) => {
         );
         if (user.length >= 1 || !regPass) {
           return res.status(409).json({
-            message: "Địa chỉ Email này đã có người sử dụng",
             err: "Địa chỉ Email này đã có người sử dụng"
           });
         } else {
@@ -83,7 +82,10 @@ exports.user_signup = async (req, res, next) => {
 
 exports.user_profile = async (req, res, next) => {
   try {
-    let foundUser = await User.findOne({ _id: req.decoded._id }).populate();
+    let foundUser = await User.findOne({ _id: req.decoded._id })
+    .populate('address')
+    .select()
+    .exec()
     if (foundUser) {
       res.json({
         success: true,

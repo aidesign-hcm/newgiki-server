@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Product = require("../models/products");
-const User = require("../models/auth");
+const User = require("../models/users");
 const Category = require("../models/categories");
 
 // Get tat ca san pham

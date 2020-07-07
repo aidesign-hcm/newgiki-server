@@ -1,11 +1,24 @@
-const mongoose = require ('mongoose')
+const mongoose = require('mongoose');
+const deepPopulate = require('mongoose-deep-populate')(mongoose);
+const Schema = mongoose.Schema;
 
-const orderSchema = mongoose.Schema({
+
+const orderSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    product: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true
-    },
-    quantity: {type:Number, default: 1}
+    buyer: {type: Schema.Types.ObjectId, ref: 'User'},
+    products: [
+        {
+            productId: {type: Schema.Types.ObjectId, ref: 'Product'},
+            quantity: Number,
+            price: Number
+
+        }
+    ],
+    estimatedDelivery: String,
+    date: { type: Date, default: Date.now },
+    totalPrice: Number,
 })
 
-module.exports = mongoose.model('Order', orderSchema )
+orderSchema.plugin(deepPopulate);
+
+module.exports = mongoose.model('Order', orderSchema)

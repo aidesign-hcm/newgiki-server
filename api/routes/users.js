@@ -4,7 +4,7 @@ const checkAuth = require('../middleware/check-auth')
 
 // const checkAuth = require('../middleware/check-auth')
 
-const userController = require('../controllers/auth')
+const userController = require('../controllers/users')
 
 router.get('/users', checkAuth, userController.user_get_all)
 
