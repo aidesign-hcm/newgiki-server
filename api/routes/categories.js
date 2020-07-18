@@ -1,10 +1,16 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
-const checkAuth = require('../middleware/check-auth')
-const categoryController  = require('../controllers/categories')
+const checkAuth = require("../middleware/check-auth");
+const categoryController = require("../controllers/categories");
+const Category = require("../models/categories");
 
-router.post('/', checkAuth, categoryController.create_category)
+router.post("/", checkAuth, categoryController.create_category);
 
-router.get('/', categoryController.get_category)
+router.get("/", categoryController.get_all_parent_categories);
 
-module.exports = router 
+router.get("/ancestors/", categoryController.get_parent_categories);
+
+router.get("/descendants/", categoryController.get_descendants);
+
+
+module.exports = router;

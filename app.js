@@ -9,7 +9,7 @@ var cors = require('cors')
 dotenv.config()
 // Conect Mongosse database
 mongoose.connect(process.env.MONGO_URL,
-{ useNewUrlParser: true, useUnifiedTopology: true })
+{ useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false})
 mongoose.Promise = global.Promise;
 
 // access view URL
@@ -44,6 +44,7 @@ const addressRouter = require('./api/routes/address')
 const shipmentRouter = require('./api/routes/shipment')
 const paymentRouter = require('./api/routes/payment')
 const searchRouter = require('./api/routes/search')
+const attributeRouter = require('./api/routes/attributes')
 
 // Use Router 
 app.use('/api/products', productRouter)
@@ -54,6 +55,8 @@ app.use('/api/address', addressRouter )
 app.use('/api/shipment', shipmentRouter )
 app.use('/api/payment', paymentRouter )
 app.use('/api/search', searchRouter )
+app.use('/api/attributes', attributeRouter )
+
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');

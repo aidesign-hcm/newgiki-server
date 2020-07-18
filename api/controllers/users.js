@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 // var salt = bcrypt.genSaltSync(10);
 // var hash = bcrypt.hashSync("B4c0//", salt);
 const jwt = require("jsonwebtoken");
+const sharp = require("sharp");
 
 const User = require("../models/users");
 
@@ -33,7 +34,7 @@ exports.user_signup = async (req, res, next) => {
         );
         if (user.length >= 1 || !regPass) {
           return res.status(409).json({
-            err: "Địa chỉ Email này đã có người sử dụng"
+            err: "Địa chỉ Email này đã có người sử dụng",
           });
         } else {
           bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -54,7 +55,6 @@ exports.user_signup = async (req, res, next) => {
               user
                 .save()
                 .then((result) => {
-                  console.log(result);
                   res.status(201).json({
                     success: true,
                     message: "User created",
@@ -82,14 +82,14 @@ exports.user_signup = async (req, res, next) => {
 
 exports.user_profile = async (req, res, next) => {
   try {
-    let foundUser = await User.findOne({ _id: req.decoded._id })
-    .populate('address')
-    .select()
-    .exec()
-    if (foundUser) {
+    let user = await User.findOne({ _id: req.decoded._id })
+      .populate("address")
+      .select("userName email address avatar")
+      .exec();
+    if (user) {
       res.json({
         success: true,
-        user: foundUser,
+        user: user,
       });
     }
   } catch (err) {
@@ -99,7 +99,7 @@ exports.user_profile = async (req, res, next) => {
 
 exports.user_login = async (req, res) => {
   try {
-    let foundUser = await User.findOne({ email: req.body.email });
+    let foundUser = await User.findOne({ email: req.body.email }).select();
     if (!foundUser) {
       res.status(403).json({
         success: false,
@@ -115,6 +115,7 @@ exports.user_login = async (req, res) => {
           token: token,
           email: foundUser.email,
           name: foundUser.name,
+          avatar: foundUser.avatar,
         });
       } else {
         res.status(403).json({
@@ -142,4 +143,50 @@ exports.user_delete = (req, res, next) => {
         error: err,
       });
     });
+};
+
+exports.user_avatar = async (req, res, next) => {
+  try {
+    let width = 150;
+    let height = 150;
+    await sharp(req.file.path)
+      .resize(width, height)
+      .jpeg({
+        quality: 100,
+        chromaSubsampling: "4:4:4",
+      })
+      .toFile("uploads/avatar/thumb_" + req.file.filename, function (
+        err,
+        info
+      ) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(info);
+        }
+      });
+    let foundUser = await User.findOne({ _id: req.decoded._id });
+    foundUser.avatar = "uploads/avatar/thumb_" + req.file.filename;
+    await foundUser.save();
+    res.send({
+      success: true,
+      avatar: foundUser.avatar,
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: err });
+  }
+};
+
+exports.user_delete_avatar = async (req, res) => {
+  try {
+    let foundUser = await User.findOne({ _id: req.decoded._id });
+    foundUser.avatar = undefined;
+    await foundUser.save();
+    res.status(200).json({
+      success: true,
+    });
+  } catch (e) {
+    res.status(500).send(console.log(e));
+  }
 };

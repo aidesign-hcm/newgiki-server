@@ -12,11 +12,11 @@ router.get('/', productController.products_get_all )
 
 router.get('/by-user', checkAuth, productController.product_byUser )
 
-router.post('/', checkAuth, upload.single('productImage'), productController.products_create_product)
+router.post('/', checkAuth, upload.array('productImage', 4), productController.products_create_product)
 
 router.get('/:id', productController.products_get_product )
 
-router.patch('/:id', checkAuth, upload.single('productImage'), productController.products_update_product )
+// router.patch('/:id', checkAuth, upload.single('productImage'), productController.products_update_product )
 
 router.put('/:id', checkAuth, upload.single('productImage'), productController.update_product_by_put)
 

@@ -3,19 +3,26 @@ const User = require("../models/users");
 const axios = require("axios");
 const Address = require("../models/address");
 
+// Tao dia chi
 exports.create_address = async (req, res) => {
   try {
-    let address = new Address({
+    const updatedAddressUser = await User.findOneAndUpdate(
+      { _id: req.decoded._id },
+      { $set: { address: {
       user: req.decoded._id,
+      name: req.body.name,
       street: req.body.street,
       apartment: req.body.apartment,
       district: req.body.district,
       city: req.body.city,
       phoneNumber: req.body.phoneNumber,
-    });
-
-    await address.save();
+      } }
+     },
+     { upsert: true },
+    );
+    updatedAddressUser.save()
     res.status(200).json({
+      updatedAddressUser: updatedAddressUser.address,
       success: true,
       message: "address create successfully",
     });
@@ -28,12 +35,16 @@ exports.create_address = async (req, res) => {
   }
 };
 
+// Lay dia chi User
 exports.get_user_address = async (req, res) => {
   try {
-    let address = await Address.find({ user: req.decoded._id });
+    let userInfo = await User.findOne({ _id: req.decoded._id })
+    .populate()
+    .select('address _id')
+    .exec()
     res.status(200).json({
       success: true,
-      address: address,
+      userInfo,
     });
   } catch (err) {
     console.log(err);
@@ -43,6 +54,7 @@ exports.get_user_address = async (req, res) => {
   }
 };
 
+// Lay Thanh pho tinh thanh
 exports.get_city_address = async (req, res) => {
   try {
     let response = await axios.get(
@@ -57,19 +69,19 @@ exports.get_city_address = async (req, res) => {
   }
 };
 
+// Chinh sua dia chi
 exports.edit_address = async (req, res) => {
   try {
-    let foundAdd = await Address.findOne({
-      _id: req.params.id,
-      user: req.decoded._id,
+    let foundAdd = await User.findOne({
+      _id: req.decoded._id
     });
     if (foundAdd) {
-      if (req.body.street)
-        foundAdd.street = req.body.street;
-      if (req.body.apartment) foundAdd.apartment = req.body.apartment;
-      if (req.body.district) foundAdd.district = req.body.district;
-      if (req.body.city) foundAdd.city = req.body.city;
-      if (req.body.phoneNumber) foundAdd.phoneNumber = req.body.phoneNumber;
+      if (req.body.name) foundAdd.address.name = req.body.name;
+      if (req.body.street) foundAdd.address.street = req.body.street;
+      if (req.body.apartment) foundAdd.address.apartment = req.body.apartment;
+      if (req.body.district) foundAdd.address.district = req.body.district;
+      if (req.body.city) foundAdd.address.city = req.body.city;
+      if (req.body.phoneNumber) foundAdd.address.phoneNumber = req.body.phoneNumber;
     }
     await foundAdd.save();
     res.status(200).json({
@@ -85,57 +97,59 @@ exports.edit_address = async (req, res) => {
   }
 };
 
-exports.delete_address = async (req, res) => {
-  try {
-    let deleteAddress = await Address.remove({
-      user: req.decoded._id,
-      _id: req.params.id,
-    });
-    if (deleteAddress) {
-      res.status(200).json({
-        success: true,
-        message: "Address has been delete",
-      });
-    }
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
-};
 
-exports.get_address_by_id = async (req, res) => {
-    try {
-      let foundAddress = await Address.findOne({ _id: req.params.id });
-      res.status(200).json({
-        success: true,
-        address: foundAddress,
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.message,
-        success: false,
-      });
-    }
-  }
+// exports.delete_address = async (req, res) => {
+//   try {
+//     let deleteAddress = await Address.remove({
+//       user: req.decoded._id,
+//       _id: req.params.id,
+//     });
+//     if (deleteAddress) {
+//       res.status(200).json({
+//         success: true,
+//         message: "Address has been delete",
+//       });
+//     }
+//   } catch (err) {
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
+//   }
+// };
 
-  exports.setDefaultAddress = async (req, res) => {
-    try {
-      const updatedAddressUser = await User.findOneAndUpdate(
-        {_id: req.decoded._id},
-        {$set: {address: req.body.id}})
-      if(updatedAddressUser){
-        res.status(200).json({
-          success: true,
-          message: "Address has been set default"
-        })
-      }
-    } catch(err){
-      console.log(err)
-      res.status(500).json({
-        success: false,
-        message: err.message,
-      });
-    }
-  }
+// exports.get_address_by_id = async (req, res) => {
+//     try {
+//       let foundAddress = await Address.findOne({ _id: req.params.id });
+//       res.status(200).json({
+//         success: true,
+//         address: foundAddress,
+//       });
+//     } catch (err) {
+//       res.status(500).json({
+//         message: err.message,
+//         success: false,
+//       });
+//     }
+//   }
+
+// exports.setDefaultAddress = async (req, res) => {
+//   try {
+//     const updatedAddressUser = await User.findOneAndUpdate(
+//       { _id: req.decoded._id },
+//       { $set: { address: req.body.id } }
+//     );
+//     if (updatedAddressUser) {
+//       res.status(200).json({
+//         success: true,
+//         message: "Address has been set default",
+//       });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
+//   }
+// };

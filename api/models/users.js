@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
+  avatar: { type: String},
   userName: { type: String, required: true },
   email: {
     type: String,
@@ -15,7 +16,15 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  address: {type: Schema.Types.ObjectId, ref: 'Address'}
+  address: {
+    _id: mongoose.Schema.Types.ObjectId,
+    name: {type:String},
+    street: {type: String},
+    apartment: {type: String},
+    district: {type: String},
+    city: {type: String},
+    phoneNumber: {type: Number},
+  }
 });
 
 // userSchema.pre("save", function (next) {

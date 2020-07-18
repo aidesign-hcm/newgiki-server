@@ -21,14 +21,14 @@ router.put("/:id", checkAuth, AddressControllers.edit_address);
 
 // Xoa dia chi User
 
-router.delete("/:id", checkAuth, AddressControllers.delete_address);
+// router.delete("/:id", checkAuth, AddressControllers.delete_address);
 
 // Lấy thông tin địa chỉ
 
-router.get("/:id", checkAuth, AddressControllers.get_address_by_id);
+// router.get("/:id", checkAuth, AddressControllers.get_address_by_id);
 
 // Set dia chi mac dinh
 
-router.put("/set/default", checkAuth, AddressControllers.setDefaultAddress)
+// router.put("/set/default", checkAuth, AddressControllers.setDefaultAddress)
 
 module.exports = router;

@@ -10,13 +10,14 @@ const orderSchema = new Schema({
         {
             productId: {type: Schema.Types.ObjectId, ref: 'Product'},
             quantity: Number,
-            price: Number
-
+            price: Number,
+            term: String
         }
     ],
     estimatedDelivery: String,
     date: { type: Date, default: Date.now },
     totalPrice: Number,
+    receiveAdd: { type: Object }
 })
 
 orderSchema.plugin(deepPopulate);

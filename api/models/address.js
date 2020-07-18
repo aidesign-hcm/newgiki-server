@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const addressSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref: 'User'},
+    name: {type:String, default: ''},
     street: {type: String, default: ''},
     apartment: {type: String, default: ''},
     district: {type: String, default: ''},
